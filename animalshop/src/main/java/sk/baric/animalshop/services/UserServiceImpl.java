@@ -2,13 +2,16 @@ package sk.baric.animalshop.services;
 
 import javax.inject.Inject;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import sk.baric.animalshop.data.entities.User;
 import sk.baric.animalshop.data.repository.UserRepository;
+import sk.baric.animalshop.rest.exceptions.ValueAlreadyExistsException;
 
 /**
  * {@inheritDoc}
@@ -25,7 +28,6 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Transactional
 	@Override
 	public User registerNewUser(String username, String email, String plaintextPassword) {
 		User newUser = new User();
@@ -33,8 +35,16 @@ public class UserServiceImpl implements UserService {
 		newUser.setUsername(username);
 		newUser.setPasswordHash(bc.encode(plaintextPassword));
 		
-		newUser = rep.save(newUser);		
-		return newUser;
+		try {
+			return rep.save(newUser);
+		}
+		catch (DataIntegrityViolationException e) {
+			if (rep.findUserByName(username) != null)
+				throw new ValueAlreadyExistsException("User", "username", username);
+			else if (rep.findUserByEmail(email) != null)
+				throw new ValueAlreadyExistsException("User", "email", email);
+			throw e;
+		}
 	}
 	
 	/**
