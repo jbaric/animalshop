@@ -25,6 +25,7 @@ import sk.baric.animalshop.data.entities.User;
 import sk.baric.animalshop.data.repository.OrderRepository;
 import sk.baric.animalshop.data.repository.ProductRepository;
 import sk.baric.animalshop.rest.exceptions.MissingProductsException;
+import sk.baric.animalshop.rest.exceptions.NoProductOrderedException;
 import sk.baric.animalshop.services.AuthorizationService;
 import sk.baric.animalshop.services.OrderService;
 import sk.baric.animalshop.validation.ValidationDefaults;
@@ -76,6 +77,9 @@ public class OrdersEndpoints extends AbstractEndpoint {
 	 */
 	@PostMapping(produces = MediaType.TEXT_PLAIN_VALUE)
 	public String createOrder(@RequestParam("products-ids") List<Long> ids, @RequestHeader("Authorization") String authorizationValue) {
+		
+		if (ids.isEmpty())
+			throw new NoProductOrderedException();
 		
 		String token = extractToken(authorizationValue);		
 		User user = checkAndGetUser(token);
