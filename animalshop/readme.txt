@@ -81,3 +81,7 @@ to Debug: import existing maven project and run as Java Application the main met
 =====================================================
 
 there is a SoapUI project to test the endpoints, but consider that the token is not valid any more, you have to use a fresh one after login
+
+=====================================================
+
+Juraj Baric, 2020
