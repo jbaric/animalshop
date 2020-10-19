@@ -74,11 +74,11 @@ There are public and authorized endpoints:
  retrieves authorization token in HEADER in format "Authorization: Basic {authorization_token}" OR 401
  
  
- + POST /orders?products-ids=x,y,z
+ + POST /orders?products-ids=pid_1,...,pid_n
  
  mandatory: 
  
- GET params:at least 1 Product ID
+ GET params: at least 1 Product ID (no upper bound for count)
  
  HEADER Authorization: Basic {authorization_token}
  
