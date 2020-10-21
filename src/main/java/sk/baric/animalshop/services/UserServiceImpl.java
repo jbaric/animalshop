@@ -2,12 +2,10 @@ package sk.baric.animalshop.services;
 
 import javax.inject.Inject;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import sk.baric.animalshop.data.entities.User;
 import sk.baric.animalshop.data.repository.UserRepository;
