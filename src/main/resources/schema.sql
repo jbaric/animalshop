@@ -13,7 +13,9 @@ create table PRODUCT
     DESCRIPTION VARCHAR not null,
     LOWER_NAME VARCHAR not null,
     constraint PRODUCT_PK
-        primary key (ID)
+        primary key (ID),
+    constraint LOWER_NAME_UNIQUE
+        unique (LOWER_NAME)
 );
 
 create table PRODUCT_CATEGORY
