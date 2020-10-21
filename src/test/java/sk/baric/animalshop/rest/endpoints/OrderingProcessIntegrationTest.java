@@ -35,6 +35,7 @@ import sk.baric.animalshop.AnimalShopApplication;
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 public class OrderingProcessIntegrationTest {
+	
 	@Inject
     private MockMvc mockMvc;
 

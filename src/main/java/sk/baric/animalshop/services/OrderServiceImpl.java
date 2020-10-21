@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import sk.baric.animalshop.data.entities.Order;
@@ -18,6 +20,8 @@ import sk.baric.animalshop.data.repository.OrderRepository;
  */
 @Service
 public class OrderServiceImpl implements OrderService {
+	
+	Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 	
 	@Inject
 	OrderRepository repository;
@@ -33,6 +37,8 @@ public class OrderServiceImpl implements OrderService {
 		o.setProducts(products);
 		o.setTotalPrice(products.stream().mapToDouble(p -> p.getPrice()).sum());
 		o = repository.save(o);
+		
+		log.info("Order created " + o.getId());
 		return o;
 	}
 

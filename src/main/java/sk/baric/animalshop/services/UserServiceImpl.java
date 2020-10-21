@@ -2,6 +2,8 @@ package sk.baric.animalshop.services;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +18,8 @@ import sk.baric.animalshop.rest.exceptions.ValueAlreadyExistsException;
  */
 @Service
 public class UserServiceImpl implements UserService {
+	
+	Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Autowired
 	PasswordEncoder bc;
@@ -34,7 +38,9 @@ public class UserServiceImpl implements UserService {
 		newUser.setPasswordHash(bc.encode(plaintextPassword));
 		
 		try {
-			return rep.save(newUser);
+			newUser = rep.save(newUser);
+			log.info("New user with usename '" + username + "' created");
+			return newUser;
 		}
 		catch (DataIntegrityViolationException e) {
 			if (rep.findUserByName(username) != null)

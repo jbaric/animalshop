@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import sk.baric.animalshop.data.entities.User;
@@ -16,6 +18,8 @@ import sk.baric.animalshop.validation.ValidationDefaults;
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
 
+	Logger log = LoggerFactory.getLogger(AuthorizationServiceImpl.class);
+	
 	@Inject
 	UserService userService;
 	
@@ -56,6 +60,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 			token = generateToken();
 		} while(tokens.putIfAbsent(token, user) != null);
 		
+		
+		log.trace("New token generated for user " + user.getUsername() + " with values " + token);
 		return token;
 	}
 

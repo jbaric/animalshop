@@ -1,9 +1,12 @@
 package sk.baric.animalshop.rest.endpoints;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Validator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +28,8 @@ import sk.baric.animalshop.services.UserService;
 @RequestMapping("/login")
 public class LoginEndpoints extends AbstractEndpoint {
 
+	Logger log = LoggerFactory.getLogger(LoginEndpoints.class);
+
 	@Inject
 	UserService userService;
 	
@@ -34,19 +39,19 @@ public class LoginEndpoints extends AbstractEndpoint {
 	@Inject
 	Validator validator;
 
-	public void login(HttpServletResponse response, String authorizationValue) {		
+	public void login(HttpServletRequest request, HttpServletResponse response, String authorizationValue) {		
 		String[] data = extractUsernameAndPassword(authorizationValue);
 		
 		if (validator.validateValue(UserDto.class, "username", data[0]).size() > 0)
-			loginFailed();
+			loginFailed(request);
 		
 		if (validator.validateValue(UserDto.class, "password", data[1]).size() > 0)
-			loginFailed();
+			loginFailed(request);
 		
 		String token = authorizationService.loginByUsername(data[0], data[1]);
 		
 		if (token == null)
-			loginFailed();
+			loginFailed(request);
 		
 		addAuthorizationToken(response, token);
 	}
@@ -57,16 +62,16 @@ public class LoginEndpoints extends AbstractEndpoint {
 	 * @param data
 	 */
 	@PostMapping(produces = MediaType.TEXT_PLAIN_VALUE)
-	public void login(HttpServletResponse response, 
+	public void login(HttpServletRequest request, HttpServletResponse response, 
 			@RequestBody(required = false) UserDto data,
 			@RequestHeader(name = "Authorization", required = false) String authorizationValue) {
 		
 		if (data == null) {
-			login(response, authorizationValue);
+			login(request, response, authorizationValue);
 		}
 		else {
 			if (validator.validateProperty(data, "password").size() > 0)
-				loginFailed();
+				loginFailed(request);
 			
 			String token = null;
 			String password = data.getPassword();
@@ -85,12 +90,14 @@ public class LoginEndpoints extends AbstractEndpoint {
 			}
 			
 			if (token == null)
-				loginFailed();
+				loginFailed(request);
 			addAuthorizationToken(response, token);
 		}
 	}
 	
-	private void loginFailed() {
+	private void loginFailed(HttpServletRequest request) {
+		log.warn("Failed login attempt from " + request.getRemoteAddr());
+		
 		returnAuthorisation("to login a valid username or email, and a valid password required");
 	}
 	
