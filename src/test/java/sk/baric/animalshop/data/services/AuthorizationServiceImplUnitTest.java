@@ -29,6 +29,7 @@ public class AuthorizationServiceImplUnitTest {
 	public void loginByEmail() {
 		String email = "test@test.com";
 		String plaintextPassword = "123456789";
+		
 		User user = new User();
 		user.setEmail(email);
 		user.setUsername("Test");
